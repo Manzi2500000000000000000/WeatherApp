@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="API.css">
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+  <title>Weather App</title>
+</head>
+<body>
+  <div class="weather-container">
+    <h1 style="font-family: white;">Weather App</h1>
+    <div class="search-container">
+      <i class='bx bxs-map'></i>
+      <input type="text" id="cityInput" placeholder="Enter city">
+      <button onclick="getWeather()" class="bx bx-search"></button>
+    </div><br><br><br><br>
+    <div class="weather-info" id="weatherInfo"></div>
+  </div>
+
+  <script type="text/javascript">
+    const apiKey = "7f1c041c22ecd169b4bc3e75f6b8dff5"; // Replace with your OpenWeatherMap API key
+
+async function getWeather() {
+  const cityInput = document.getElementById('cityInput');
+  const cityName = cityInput.value;
+
+  if (!cityName) {
+    alert('Please enter a city name');
+    return;
+  }
+
+  const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${apiKey}&units=metric`;
+
+  try {
+    const response = await fetch(apiUrl);
+    const data = await response.json();
+
+    if (data.cod === '404') {
+      alert('City not found. Please enter a valid city name.');
+      return;
+    }
+
+    displayWeather(data);
+  } catch (error) {
+    console.error('Error fetching weather data:', error);
+    alert('An error occurred. Please try again.');
+  }
+}
+
+function displayWeather(data) {
+  const weatherInfo = document.getElementById('weatherInfo');
+  const cityName = data.name;
+  const temperature = data.main.temp;
+  const description = data.weather[0].description;
+   const iconCode = data.weather[0].icon;
+  const iconUrl = `http://openweathermap.org/img/w/${iconCode}.png`;
+
+  const date = new Date();
+  const formattedDate = `${date.toLocaleDateString()}${date.toLocaleTimeString()}`;
+
+  const content = `
+    <h2>${cityName}</h2>
+    <p>Date and Time: ${formattedDate}</p>
+    <p>Temperature: ${temperature}°C</p>
+    <p>Description: ${description}</p>
+    <img class="weather-icon" src="${iconUrl}" alt="Weather Icon">
+  `;
+
+  weatherInfo.innerHTML = content;
+}
+
+  </script>
+</body>
+</html>
